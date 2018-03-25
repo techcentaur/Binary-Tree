@@ -17,7 +17,7 @@ public class Binarytree<Key extends Comparable<Key>, Value>
         }
     }
 
-    Binarytree(Key key, Value val){
+    public Binarytree(Key key, Value val){
         this.root = new Node(key, val);
     }
 
@@ -55,20 +55,55 @@ public class Binarytree<Key extends Comparable<Key>, Value>
     private boolean _search(Key key, Node rootNode){
         boolean b = false;
         if (rootNode.key.compareTo(key) == 0) {
-                System.out.println("[*][*] Key successfully found!");
+                System.out.println("[*][*] Key successfully found! ");
                 return b = true;
             }
             else if (rootNode.key.compareTo(key) > 0){
-                b = _search(key, rootNode.leftT);
-
+                if (rootNode.leftT != null) {
+                    b = _search(key, rootNode.leftT);
+                }
+                else{
+                    System.out.println("[?][?] Key doesn't exist! ");
+                }
             }
             else if (rootNode.key.compareTo(key) < 0) {
-                b = _search(key, rootNode.rightT);
+                if(rootNode.rightT!=null){
+                    b = _search(key, rootNode.rightT);
+                }
+                else System.out.println("[?][?] Key doesn't exist! ");
         }
         return b;
     }
 
-    int main(){
-        Binarytree<Key, Value> b = new Binarytree<Key,Value>(5, 5);
+    public void display(){
+        System.out.print("[*] Displaying Tree : ");
+        _display(root);
+        System.out.println("");
+    }
+    private void _display(Node rootNode){
+        if(rootNode.leftT!=null){
+            System.out.print("[");
+            _display(rootNode.leftT);
+            System.out.print("]");
+        }
+
+        System.out.print(rootNode.val);
+
+        if(rootNode.rightT!=null){
+            System.out.print("[");
+            _display(rootNode.rightT);
+            System.out.print("]");
+        }
+    }
+
+    public static void main(String[] args){
+        Binarytree<Integer, Integer> b = new Binarytree<>(5, 5);
+        b.insert(10, 10);
+        b.insert(1, 1);
+        b.insert(2, 2);
+        b.insert(4, 4);
+        b.insert(7, 7);
+        b.insert(18, 18);
+        b.display();
     }
 }
