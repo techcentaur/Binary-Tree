@@ -96,6 +96,56 @@ public class Binarytree<Key extends Comparable<Key>, Value>
         }
     }
 
+    public void delete(Key key){
+        _delete(key, root);
+    }
+    private void _delete(Key key, Node rootNode){
+        if (rootNode.key.equals(key)){
+            if (isLeaf(rootNode)){
+                if (rootNode.parent!=null){
+
+                }
+                else{
+                    rootNode.key = null;
+                }
+            }
+            else if(rootNode.leftT == null){
+                if(rootNode.parent!=null){
+                    rootNode.rightT.parent = rootNode.parent;
+                    rootNode.parent.rightT = rootNode.rightT;
+                }
+                else{
+                    rootNode.key = (predecessor(rootNode)).key;
+                    rootNode.val = (predecessor(rootNode)).val;
+                }
+            }
+            else if(rootNode.rightT == null){
+                if(rootNode.parent!=null){
+                    rootNode.leftT.parent = rootNode.parent;
+                    rootNode.parent.leftT = rootNode.leftT;
+                }
+                else{
+                    rootNode.key = predecessor(rootNode).key;
+                    rootNode.val = predecessor(rootNode).val;
+                }
+            }
+            else{
+                rootNode.key = predecessor(rootNode).key;
+                rootNode.val = predecessor(rootNode).val;
+            }
+        }
+        else if((rootNode.key.compareTo(key)) > 0){
+            _delete(key, rootNode.leftT);
+        }
+        else if((rootNode.key.compareTo(key)) < 0){
+            _delete(key, rootNode.rightT);
+        }
+    }
+
+    private Node predecessor(Node rootNode){
+        if(rootNode.leftT != null)
+    }
+
     public static void main(String[] args){
         Binarytree<Integer, Integer> b = new Binarytree<>(5, 5);
         b.insert(10, 10);
