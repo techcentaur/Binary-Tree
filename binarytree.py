@@ -4,6 +4,7 @@ class Node:
         self.lT = lT
         self.key = key
         self.parent = None
+        self.height = 0
 
 
 class BinaryTree:
@@ -24,6 +25,7 @@ class BinaryTree:
                 newNode = Node(key)
                 root.lT = newNode
                 newNode.parent = root
+                newNode.height = root.height + 1
             else:
                 self.insert(root.lT, key)
         elif root.key<key:
@@ -31,6 +33,7 @@ class BinaryTree:
                 newNode = Node(key)
                 root.rT = newNode
                 newNode.parent = root
+                newNode.height = root.height + 1
             else:
                 self.insert(root.rT, key)
 
