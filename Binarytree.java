@@ -22,7 +22,7 @@ public class Binarytree<Key extends Comparable<Key>, Value>
     }
 
     private boolean isLeaf(Node n){
-        return (n.leftT != null) && (n.rightT != null);
+        return (n.leftT == null) && (n.rightT == null);
     }
 
     public void insert(Key key, Value val){
@@ -96,64 +96,66 @@ public class Binarytree<Key extends Comparable<Key>, Value>
         }
     }
 
-    public void delete(Key key){
+    private void delete(Key key){
         _delete(key, root);
     }
     private void _delete(Key key, Node rootNode){
         if (rootNode.key.equals(key)){
             if (isLeaf(rootNode)){
-                if (rootNode.parent!=null){
-
-                }
+                if (rootNode==root) root.key=null;
                 else{
-                    rootNode.key = null;
+                    if (rootNode.parent.leftT==rootNode) rootNode.parent.leftT=null;
+                    else rootNode.parent.rightT=null;
                 }
-            }
-            else if(rootNode.leftT == null){
-                if(rootNode.parent!=null){
-                    rootNode.rightT.parent = rootNode.parent;
+            } else if (rootNode.leftT==null){
+                if(rootNode.rightT.key.compareTo(rootNode.parent.key) > 0){
                     rootNode.parent.rightT = rootNode.rightT;
+                    rootNode.rightT.parent = rootNode.parent;
+                } else{
+                    rootNode.parent.leftT = rootNode.rightT;
+                    rootNode.rightT.parent = rootNode.parent;
                 }
-                else{
-                    rootNode.key = (predecessor(rootNode)).key;
-                    rootNode.val = (predecessor(rootNode)).val;
-                }
-            }
-            else if(rootNode.rightT == null){
-                if(rootNode.parent!=null){
+            } else if(rootNode.rightT==null){
+                if (rootNode.leftT.key.compareTo(rootNode.parent.key) > 0){
+                    rootNode.parent.rightT = rootNode.leftT;
                     rootNode.leftT.parent = rootNode.parent;
+                } else{
                     rootNode.parent.leftT = rootNode.leftT;
+                    rootNode.leftT.parent = rootNode.parent;
                 }
-                else{
-                    rootNode.key = predecessor(rootNode).key;
-                    rootNode.val = predecessor(rootNode).val;
-                }
-            }
-            else{
-                rootNode.key = predecessor(rootNode).key;
-                rootNode.val = predecessor(rootNode).val;
+            } else{
+                Node n = predecessor(rootNode.leftT);
+                delete(n.key);
+                rootNode.key = n.key;
             }
         }
-        else if((rootNode.key.compareTo(key)) > 0){
-            _delete(key, rootNode.leftT);
-        }
-        else if((rootNode.key.compareTo(key)) < 0){
-            _delete(key, rootNode.rightT);
-        }
+        else if((rootNode.key.compareTo(key)) > 0) _delete(key, rootNode.leftT);
+        else if((rootNode.key.compareTo(key)) < 0) _delete(key, rootNode.rightT);
+        else System.out.print("[?][?] Key doesn't exist...!");
+
     }
 
     private Node predecessor(Node rootNode){
-        if(rootNode.leftT != null)
+        Node n1;
+        if(rootNode.rightT==null) return rootNode;
+        else n1 = predecessor(rootNode.rightT);
+        return n1;
     }
 
     public static void main(String[] args){
         Binarytree<Integer, Integer> b = new Binarytree<>(5, 5);
+        b.insert(1,1);
         b.insert(10, 10);
-        b.insert(1, 1);
         b.insert(2, 2);
         b.insert(4, 4);
         b.insert(7, 7);
         b.insert(18, 18);
+        b.insert(0, 0);
+        b.insert(14, 14);
+        b.insert(6, 6);
+        b.insert(3, 3);
+        b.display() ;
+        b.delete(5);
         b.display();
     }
 }
