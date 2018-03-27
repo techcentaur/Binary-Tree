@@ -12,80 +12,103 @@ class BinaryTree:
     def __init__(self):
         self.rootNode = Node()
 
-    def isLeaf(self, root):
+    @staticmethod
+    def isLeaf(root):
         if (root.rT is None) and (root.lT is None):
             return True
         return False
 
-    def insert(self, root, key):
-        if root.key==key:
+    def insert(self, key):
+        self._insert(self.rootNode, key)
+
+    def _insert(self, root, key):
+        if root.key == key:
             print('[*] Key already exists!')
-        elif key<root.key:
-            if root.lT==None:
+        elif key < root.key:
+            if root.lT is None:
                 newNode = Node(key)
                 root.lT = newNode
                 newNode.parent = root
                 newNode.height = root.height + 1
             else:
-                self.insert(root.lT, key)
-        elif root.key<key:
-            if root.rT==None:
+                self._insert(root.lT, key)
+        elif root.key < key:
+            if root.rT is None:
                 newNode = Node(key)
                 root.rT = newNode
                 newNode.parent = root
                 newNode.height = root.height + 1
             else:
-                self.insert(root.rT, key)
+                self._insert(root.rT, key)
 
-    def search(self, root, key):
-        if self.isLeaf(root) and root.key!=key:
+    def search(self, key):
+        self._search(self.rootNode, key)
+
+    def _search(self, root, key):
+        if self.isLeaf(root) and root.key != key:
             print('[*] Key not found')
         else:
             if root.key == key:
                 print('[*] Search successful - Key found! '.format(root.key))
                 return 0
-            elif root.key>key:
-                self.search(root.lT, key)
-            elif root.key<key:
-                self.search(root.rT, key)
+            elif root.key > key:
+                self._search(root.lT, key)
+            elif root.key < key:
+                self._search(root.rT, key)
 
     def predecessor(self, node):
-        if self.isLeaf(node):
+        if node.rT is None:
             return node
         else:
-            self.predecessor(node.rT)
+            n = self.predecessor(node.rT)
+        return n
 
+    def delete(self, key):
+        self._delete(self.rootNode, key)
 
-    def delete(self, root, key):
-        if root.key==key:
+    def _delete(self, root, key):
+        if root.key == key:
             if self.isLeaf(root):
-                if root.parent!=None:
-                    if root.parent.lT!=None:
-                        if root.parent.lT.key==key:
-                            root.parent.lT=None
-                    elif root.parent.rT!=None:
-                        if root.parent.rT.key==key:
-                            root.parent.rT=None
+                if root == self.rootNode:
+                    root.key = None
                 else:
-                    root.key=0
-                    print('[*][*] BinaryTree is empty!')
-            elif root.rT==None:
-                root.parent.lT = root.lT
-                root.lT.parent = root.parent
-                root.parent = None
+                    if root.parent.lT is root:
+                        root.parent.lT = None
+                        root.parent = None
+                    else:
+                        root.parent.rT = None
+                        root.parent = None
+            elif root.rT is None:
+                if root.parent.key > root.lT.key:
+                    root.parent.lT = root.lT
+                    root.lT.parent = root.parent
+                    root.lT = None
+                    root.parent = None
+                elif root.parent.key < root.lT.key:
+                    root.parent.rT = root.lT
+                    root.lT.parent = root.parent
+                    root.lT = None
+                    root.parent = None
             elif root.lT is None:
-                root.parent.rT = root.rT
-                root.rT.parent = root.parent
-                root.parent = None
-            else:
+                if root.parent.key > root.rT.key:
+                    root.parent.lT = root.rT
+                    root.rT.parent = root.parent
+                    root.rT = None
+                    root.parent = None
+                elif root.parent.key < root.rT.key:
+                    root.parent.rT = root.rT
+                    root.rT.parent = root.parent
+                    root.rT = None
+                    root.parent = None
+            elif root.lT is not None and root.rT is not None:
                 node = self.predecessor(root.lT)
-                node.parent = None
+                self._delete(self.rootNode, node.key)
+                root.key = node.key
 
-        elif key < root.key and root.lT!=None:
-            self.delete(root.lT, key)
-        elif root.key < key and root.rT!=None:
-            self.delete(root.rT, key)
-
+        elif key < root.key and root.lT is not None:
+            self._delete(root.lT, key)
+        elif root.key < key and root.rT is not None:
+            self._delete(root.rT, key)
         else:
             print('[*] Delete operation halted! key not found')
 
@@ -111,9 +134,9 @@ class BinaryTree:
     def _preorder(self, root):
         if root is not None:
             print(root.key, end=' ')
-            if root.lT!=None:
+            if root.lT is not None:
                 self._preorder(root.lT)
-            if root.rT!=None:
+            if root.rT is not None:
                 self._preorder(root.rT)
 
     def postorder(self, root):
@@ -141,14 +164,18 @@ class BinaryTree:
                 self._inorder(root.rT)
 
 
-if __name__=="__main__":
-
+if __name__ == "__main__":
     b = BinaryTree()
     b.rootNode.key = 5
-    b.insert(b.rootNode, 1)
-    b.insert(b.rootNode, 10)
-    b.insert(b.rootNode, 2)
-    b.insert(b.rootNode, 4)
-    b.insert(b.rootNode, 7)
-    b.insert(b.rootNode, 18)
+    b.insert(1)
+    b.insert(10)
+    b.insert(2)
+    b.insert(4)
+    b.insert(7)
+    b.insert(18)
+    b.insert(0)
+    b.insert(14)
+    b.insert(6)
+    b.insert(3)
+    b.delete(5)
     b.display(b.rootNode)
